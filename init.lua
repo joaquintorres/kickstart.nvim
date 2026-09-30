@@ -752,6 +752,7 @@ do
     fortls = {},
     -- gopls = {},
     pyright = {},
+    ansiblels = {}, -- Attaches to `yaml.ansible` buffers, see filetype detection below
     -- tsc = {},
     --
     -- Some languages (like rust) have entire language plugins that can be useful:
@@ -823,6 +824,20 @@ do
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
+  -- Neovim detects Ansible files as plain `yaml`, so mark the usual Ansible locations as `yaml.ansible`
+  vim.filetype.add {
+    pattern = {
+      ['.*/playbooks/.*%.ya?ml'] = 'yaml.ansible',
+      ['.*/roles/.*/tasks/.*%.ya?ml'] = 'yaml.ansible',
+      ['.*/roles/.*/handlers/.*%.ya?ml'] = 'yaml.ansible',
+      ['.*/roles/.*/meta/.*%.ya?ml'] = 'yaml.ansible',
+      ['.*/group_vars/.*%.ya?ml'] = 'yaml.ansible',
+      ['.*/host_vars/.*%.ya?ml'] = 'yaml.ansible',
+      ['.*/site%.ya?ml'] = 'yaml.ansible',
+      ['.*/playbook%.ya?ml'] = 'yaml.ansible',
+    },
+  }
 
   for name, server in pairs(servers) do
     vim.lsp.config(name, server)
